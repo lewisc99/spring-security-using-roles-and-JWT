@@ -8,24 +8,36 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.algorithms.Algorithm;
+
+import com.auth0.jwt.exceptions.JWTVerificationException;
+
+import com.springsecurityroles.service.MyUserDetailsService;
+import com.springsecurityroles.token.JWTUtil;
 
 public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
 
-    public JWTAuthorizationFilter(AuthenticationManager authManager) {
-        super(authManager);
-    }
+	
+	@Autowired
+	private MyUserDetailsService userDetailsService;
+	
 
     
     
-    
+    public JWTAuthorizationFilter(AuthenticationManager authManager) {
+        super(authManager);
+        
+       
+    }
+
+   
     
     
     @Override
@@ -46,20 +58,34 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
     }
 
     // Reads the JWT from the Authorization header, and then uses JWT to validate the token
-    private UsernamePasswordAuthenticationToken getAuthentication(HttpServletRequest request) {
-        String token = request.getHeader(SecurityConstants.HEADER_STRING);
+    private UsernamePasswordAuthenticationToken getAuthentication(HttpServletRequest request) throws JWTVerificationException, IOException {
+       
+    	
+    	String token = request.getHeader(SecurityConstants.HEADER_STRING);
 
         if (token != null) {
             // parse the token.
-            String user = JWT.require(Algorithm.HMAC512(SecurityConstants.SECRET.getBytes()))
-                    .build()
-                    .verify(token.replace(SecurityConstants.TOKEN_PREFIX, ""))
-                    .getSubject();
+        	
+        	 try {
+        		 
+                 String jwt = token.substring(7);
+				String email = JWTUtil.validateTokenAndRetrieveSubject(jwt);
+				
+				
+                 
+                 if (email != null) {
+                     // new arraylist means authorities
+                	return new UsernamePasswordAuthenticationToken(email, null, new ArrayList<>());
+                 }
+                 
+             
+				
+			} catch (JWTVerificationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 
-            if (user != null) {
-                // new arraylist means authorities
-                return new UsernamePasswordAuthenticationToken(user, null, new ArrayList<>());
-            }
+           
 
             return null;
         }
