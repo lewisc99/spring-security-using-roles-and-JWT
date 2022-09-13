@@ -2,6 +2,8 @@ package com.springsecurityroles.filters;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -18,7 +20,7 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 
 
 import com.auth0.jwt.exceptions.JWTVerificationException;
-
+import com.springsecurityroles.config.ConvertToGrantedAuthority;
 import com.springsecurityroles.service.MyUserDetailsService;
 import com.springsecurityroles.token.JWTUtil;
 
@@ -54,6 +56,7 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
         UsernamePasswordAuthenticationToken authentication = getAuthentication(req);
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
+        
         chain.doFilter(req, res);
     }
 
@@ -69,13 +72,19 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
         	 try {
         		 
                  String jwt = token.substring(7);
-				String email = JWTUtil.validateTokenAndRetrieveSubject(jwt);
-				
+				Map claims = JWTUtil.validateTokenAndRetrieveSubject(jwt);
 				
                  
-                 if (email != null) {
+                 if (claims != null) {
                      // new arraylist means authorities
-                	return new UsernamePasswordAuthenticationToken(email, null, new ArrayList<>());
+                	 
+     				String getRoles = (String) claims.get("roles");
+            
+
+                	 
+                	 
+                	 
+                	return new UsernamePasswordAuthenticationToken(claims.get("email"), null, ConvertToGrantedAuthority.getRoles(getRoles));
                  }
                  
              

@@ -145,7 +145,7 @@ public class Users implements UserDetails {
 		if(username!=null && getRoles()!=null && getRoles().isEmpty()==false)
 				for(Role roleUser : getRoles()){
 				
-					
+			
 					 authoritiesRole.add(new SimpleGrantedAuthority(roleUser.getName()));	
 
 				
