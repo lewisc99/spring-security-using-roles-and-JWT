@@ -10,27 +10,23 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
+
 
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
 
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.springsecurityroles.config.ConvertToGrantedAuthority;
-import com.springsecurityroles.service.MyUserDetailsService;
+
 import com.springsecurityroles.token.JWTUtil;
 
 public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
 
 	
-	@Autowired
-	private MyUserDetailsService userDetailsService;
 	
-
     
     
     public JWTAuthorizationFilter(AuthenticationManager authManager) {
@@ -72,19 +68,19 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
         	 try {
         		 
                  String jwt = token.substring(7);
-				Map claims = JWTUtil.validateTokenAndRetrieveSubject(jwt);
+                 Map<String, List<String>> claims = JWTUtil.validateTokenAndRetrieveSubject(jwt);
 				
                  
                  if (claims != null) {
-                     // new arraylist means authorities
+                 
                 	 
-     				String getRoles = (String) claims.get("roles");
-            
+                	 List<String> getRoles = new ArrayList<String>();
+                	 List<String> getUsername = new ArrayList<String>();
+                	 getUsername = claims.get("email");
+	     		     getRoles =  claims.get("roles");
 
                 	 
-                	 
-                	 
-                	return new UsernamePasswordAuthenticationToken(claims.get("email"), null, ConvertToGrantedAuthority.getRoles(getRoles));
+            	return new UsernamePasswordAuthenticationToken(getUsername.get(0), null, ConvertToGrantedAuthority.getRoles(getRoles));
                  }
                  
              

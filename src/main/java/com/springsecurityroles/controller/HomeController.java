@@ -1,11 +1,8 @@
 package com.springsecurityroles.controller;
 
-
-
-
-
-
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -16,7 +13,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
+
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -93,9 +90,21 @@ public class HomeController {
 			}
 	    	  	
 	    	
-	    	String getRoles = userDetailsService.loadUserByUsername(login.getUsername()).getAuthorities().toString();
+	    	List<String> getRoles = new ArrayList<>();
+	    	Collection<? extends GrantedAuthority> roles = userDetailsService.loadUserByUsername(login.getUsername()).getAuthorities();
+
 	    	
-	    	System.out.println(getRoles );
+	    	for (GrantedAuthority role: roles)
+	    	{
+	    		String newRole = role.getAuthority();
+	    		
+	    		getRoles.add(newRole);
+	    	}
+	    	
+	    	
+	    	System.out.println(roles);
+	    	 
+	  
 	    	
 	    	String token =  jwtUtil.generateToken(login.getUsername(), getRoles);
 	    	

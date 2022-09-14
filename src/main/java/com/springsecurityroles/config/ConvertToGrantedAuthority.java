@@ -15,20 +15,18 @@ public class ConvertToGrantedAuthority {
 
 
 
-	public static List<GrantedAuthority> getRoles(String roles) {
+	public static List<GrantedAuthority> getRoles(List<String> roles) {
 		
-		
-		String rolesFixed =  roles.substring(1, roles.length() -1);
-		
+
+
 		List<GrantedAuthority> authoritiesRole = new ArrayList<GrantedAuthority>(); 
-		
+			
 		 
 		if(roles != null)
-				
-			
-		 authoritiesRole.add(new SimpleGrantedAuthority(rolesFixed));	
-
-
+			for (String role : roles)
+			{
+				 authoritiesRole.add(new SimpleGrantedAuthority(role));	
+			}
 		
 				return authoritiesRole;
 			}
