@@ -1,9 +1,17 @@
 package com.springsecurityroles.models;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
+@ApiModel(description="Return A Token")
 public class ResponseToken {
 	
+	
+	@ApiModelProperty(notes = "Authentication format")
 	private String formart;
 	
+	
+	@ApiModelProperty(notes="The Token Generated")
 	private String token;
 	
 	public ResponseToken() {}

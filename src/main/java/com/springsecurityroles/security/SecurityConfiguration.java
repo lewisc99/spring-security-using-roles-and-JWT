@@ -41,6 +41,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 		.antMatchers("/user").hasAnyRole("USER","ADMIN")
 		.antMatchers("/logout").hasAnyRole("USER","ADMIN")
 		.antMatchers("/").permitAll()
+        .antMatchers("/swagger-ui/**", "/javainuse-openapi/**","/swagger-ui.html","/swagger-resources/**","/v2/api-docs","/webjars/**").permitAll()
 		.antMatchers("/login").permitAll().anyRequest().authenticated().
 		and()
 		.addFilter(new JWTAuthenticationFilter(authenticationManager()))

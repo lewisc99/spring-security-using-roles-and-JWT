@@ -17,6 +17,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.springsecurityroles.models.ResponseToken;
@@ -24,9 +25,14 @@ import com.springsecurityroles.models.dto.LoginDTO;
 import com.springsecurityroles.service.MyUserDetailsService;
 import com.springsecurityroles.token.JWTUtil;
 
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.Contact;
+
 
 
 @RestController
+
 public class HomeController {
 
 	
@@ -62,9 +68,12 @@ public class HomeController {
 	
 	
 	
+	@ApiOperation(value="Authenticate the user",
+			notes = "if the user is authenticated will generate a token to access the whole API",
+			response = ResponseToken.class)
 	@PostMapping(value="/login")
 
-	public ResponseEntity<ResponseToken> LogIn(@RequestBody LoginDTO login) throws Exception
+	public ResponseEntity<ResponseToken> LogIn(@ApiParam(value="You need to add a valid username and password") @RequestBody LoginDTO login) throws Exception
 	{
 		
 		 
